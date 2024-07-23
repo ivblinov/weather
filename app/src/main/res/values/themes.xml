@@ -1,8 +1,8 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<resources>
     <style name="Base.Theme.Weather" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<!--        <item name="colorPrimary">@color/white_search_screen</item>-->
+        <item name="android:navigationBarColor">@color/blue_background</item>
+        <item name="android:colorPrimaryDark">@color/blue_background</item>
     </style>
 
     <style name="Theme.Weather" parent="Base.Theme.Weather" />
