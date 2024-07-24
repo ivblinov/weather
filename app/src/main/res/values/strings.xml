@@ -1,5 +1,15 @@
 <resources>
     <string name="app_name">Weather</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="city">Москва</string>
     <string name="search_city">Искать</string>
+    <string name="detail">Подробнее</string>
+    <string name="date">Сегодня, 12 Сентября</string>
+    <string name="temperature">29</string>
+    <string name="cloudly">Облачно</string>
+    <string name="wind">Ветер</string>
+    <string name="windSpeed">10 км/ч</string>
+    <string name="divider">|</string>
+    <string name="humidity">Влаж</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
