@@ -1,9 +1,15 @@
 <resources>
     <style name="Base.Theme.Weather" parent="Theme.Material3.DayNight.NoActionBar">
 <!--        <item name="colorPrimary">@color/white_search_screen</item>-->
-        <item name="android:navigationBarColor">@color/blue_background</item>
-        <item name="android:colorPrimaryDark">@color/blue_background</item>
+        <item name="android:navigationBarColor">@color/blue_background_bottom</item>
+        <item name="android:colorPrimaryDark">@color/blue_background_top</item>
     </style>
 
     <style name="Theme.Weather" parent="Base.Theme.Weather" />
+
+    <style name="textStyle" parent="Theme.Weather">
+        <item name="android:fontFamily">@font/overpass_regular</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18sp</item>
+    </style>
 </resources>
