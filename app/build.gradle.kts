@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -47,11 +48,18 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
+    // Dagger:
+    implementation (libs.dagger)
+    ksp (libs.dagger.compiler)
+
+    // ViewModel:
+    implementation(libs.androidx.viewmodel)
+    implementation(libs.androidx.fragment.ktx)
+
     // androidx.navigation:
     implementation (libs.navigation.fragment)
     implementation (libs.navigation.ui)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    // com.google.android.gms:
+    implementation(libs.services.location)
 }
