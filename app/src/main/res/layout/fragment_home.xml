@@ -5,11 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_home"
-    android:orientation="vertical"
-    tools:context=".fragments.HomeFragment">
+    tools:context=".presentation.fragments.HomeFragment">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/blackBlock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="31dp"
@@ -44,7 +43,7 @@
         app:layout_constraintBottom_toTopOf="@id/line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/blackBlock" />
 
     <com.google.android.material.internal.BaselineLayout
         android:id="@+id/line"

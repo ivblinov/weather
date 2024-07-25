@@ -10,6 +10,8 @@
     <string name="windSpeed">10 км/ч</string>
     <string name="divider">|</string>
     <string name="humidity">Влаж</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="back">Назад</string>
+    <string name="forDay">По дням</string>
+    <string name="today">Сегодня</string>
+    <string name="today_example">Сен, 12</string>
 </resources>
