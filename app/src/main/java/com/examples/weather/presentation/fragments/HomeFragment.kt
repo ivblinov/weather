@@ -1,7 +1,6 @@
 package com.examples.weather.presentation.fragments
 
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,7 +19,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
-import com.google.android.gms.tasks.Task
 import javax.inject.Inject
 
 private const val TAG = "MyLog"
@@ -31,7 +29,6 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private var fusedClient: FusedLocationProviderClient? = null
     private var cancellationSource: CancellationTokenSource? = null
-
     @Inject
     lateinit var viewModel: HomeViewModel
 
@@ -48,7 +45,6 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         fusedClient?.let { fusedClient ->
             cancellationSource?.let { cancellationSource ->
                 checkPermissions(fusedClient, cancellationSource)
@@ -104,7 +100,5 @@ class HomeFragment : Fragment() {
                 Toast.LENGTH_LONG
             ).show()
         }
-
-
     }
 }

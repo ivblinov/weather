@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.examples.weather.R
 import com.examples.weather.databinding.FragmentDetailBinding
 
 class DetailFragment : Fragment() {
@@ -24,7 +23,6 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.blackBlock.setOnClickListener {
             findNavController().popBackStack()
         }
