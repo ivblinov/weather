@@ -52,11 +52,19 @@ dependencies {
     implementation (libs.dagger)
     ksp (libs.dagger.compiler)
 
+    // Moshi:
+    implementation(libs.moshi)
+    implementation(libs.moshi.converter)
+    ksp(libs.moshi.kotlin.codegen)
+
     // ViewModel:
     implementation(libs.androidx.viewmodel)
     implementation(libs.androidx.fragment.ktx)
 
-    // androidx.navigation:
+    // Retrofit:
+    implementation(libs.retrofit)
+
+    // Navigation:
     implementation (libs.navigation.fragment)
     implementation (libs.navigation.ui)
 

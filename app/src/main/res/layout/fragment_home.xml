@@ -36,10 +36,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/sun"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@id/line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -81,7 +82,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvDateNumber"
+            android:id="@+id/tvTemperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -89,9 +90,23 @@
             android:text="@string/temperature"
             android:textColor="@color/white"
             android:textSize="100sp"
-            app:layout_constraintEnd_toEndOf="@+id/tvDateToday"
+            app:layout_constraintEnd_toStartOf="@+id/tvDegree"
             app:layout_constraintStart_toStartOf="@+id/tvDateToday"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDegree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/overpass_regular"
+            android:text="@string/degree"
+            android:textColor="@color/white"
+            android:textSize="72sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTemperature"
+            app:layout_constraintEnd_toEndOf="@+id/tvDateToday"
+            app:layout_constraintStart_toEndOf="@+id/tvTemperature"
+            app:layout_constraintTop_toTopOf="@+id/tvTemperature" />
 
         <TextView
             android:id="@+id/tvCloudy"
@@ -103,7 +118,7 @@
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="@+id/tvDateToday"
             app:layout_constraintStart_toStartOf="@+id/tvDateToday"
-            app:layout_constraintTop_toBottomOf="@+id/tvDateNumber" />
+            app:layout_constraintTop_toBottomOf="@+id/tvTemperature" />
 
         <ImageView
             android:id="@+id/ic_wind"
