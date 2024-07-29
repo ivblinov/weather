@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,6 +22,7 @@ import com.examples.weather.app.WeatherApplication
 import com.examples.weather.databinding.FragmentHomeBinding
 import com.examples.weather.presentation.fragments.SearchFragment.Companion.REQUIRED_PERMISSIONS
 import com.examples.weather.presentation.states.HomeState
+import com.examples.weather.presentation.utils.checkValidCoordinate
 import com.examples.weather.presentation.viewmodels.HomeViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -77,7 +79,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.btnDetail.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_detailFragment)
+            navigateOnDetailFragment(latitude, longitude)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -158,6 +160,8 @@ class HomeFragment : Fragment() {
                     latitude = it.latitude,
                     longitude = it.longitude
                 )
+                latitude = it.latitude
+                longitude = it.longitude
 
 /*                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                     repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -191,6 +195,16 @@ class HomeFragment : Fragment() {
                 latitude = latitudeCoord,
                 longitude = longitudeCoord
             )
+        }
+    }
+
+    private fun navigateOnDetailFragment(latitude: Double?, longitude: Double?) {
+        if (checkValidCoordinate(latitude, longitude)) {
+            val bundle = bundleOf(
+                Pair(LATITUDE_KEY, latitude),
+                Pair(LONGITUDE_KEY, longitude),
+            )
+            findNavController().navigate(R.id.action_homeFragment_to_detailFragment, bundle)
         }
     }
 

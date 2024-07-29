@@ -19,6 +19,7 @@ import com.examples.weather.R
 import com.examples.weather.app.WeatherApplication
 import com.examples.weather.databinding.FragmentSearchBinding
 import com.examples.weather.presentation.states.SearchState
+import com.examples.weather.presentation.utils.checkValidCoordinate
 import com.examples.weather.presentation.viewmodels.SearchViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -98,10 +99,6 @@ class SearchFragment : Fragment() {
 
     private fun getAltitude(locality: String) {
         viewModel.getAltitude(locality)
-    }
-
-    private fun checkValidCoordinate(latitude: Double?, longitude: Double?): Boolean {
-        return latitude != null && longitude != null
     }
 
     private fun navigateOnHomeFragment(latitude: Double?, longitude: Double?) {

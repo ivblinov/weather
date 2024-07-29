@@ -4,6 +4,7 @@ import android.util.Log
 import com.examples.weather.data.api.GeocodingService
 import com.examples.weather.data.api.WeatherService
 import com.examples.weather.data.models_dto.CurrentWeatherDto
+import com.examples.weather.data.models_dto.DailyDto
 import com.examples.weather.data.models_dto.SearchResultListDto
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,6 +25,16 @@ class Repository @Inject constructor(
             latitude = latitude,
             longitude = longitude,
             current = current
+        )
+    }
+
+    suspend fun loadDaily(
+        latitude: Double,
+        longitude: Double,
+    ): DailyDto {
+        return weatherService.getDaily(
+            latitude = latitude,
+            longitude = longitude,
         )
     }
 
