@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.FloatRange
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -27,10 +26,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okio.IOException
-import java.util.Locale
 import javax.inject.Inject
 
 private const val TAG = "MyLog"
@@ -43,9 +39,19 @@ class HomeFragment : Fragment() {
     private var fusedClient: FusedLocationProviderClient? = null
     private var cancellationSource: CancellationTokenSource? = null
     private var geocoder: Geocoder? = null
+    private var latitude: Double? = null
+    private var longitude: Double? = null
 
     @Inject
     lateinit var viewModel: HomeViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments.let {
+            latitude = it?.getDouble(LATITUDE_KEY)
+            longitude = it?.getDouble(LONGITUDE_KEY)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,6 +67,9 @@ class HomeFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        startLocation(latitude, longitude)
+
         fusedClient?.let { fusedClient ->
             cancellationSource?.let { cancellationSource ->
                 checkPermissions(fusedClient, cancellationSource)
@@ -171,6 +180,17 @@ class HomeFragment : Fragment() {
                 "Необходимо разрешить использовать геолокацию.",
                 Toast.LENGTH_LONG
             ).show()
+        }
+    }
+
+    private fun startLocation(latitudeCoord: Double?, longitudeCoord: Double?) {
+        if (latitudeCoord != null && longitudeCoord != null) {
+            Log.d(TAG, "latitude = $latitudeCoord")
+            Log.d(TAG, "longitude = $longitudeCoord")
+            viewModel.getWeather(
+                latitude = latitudeCoord,
+                longitude = longitudeCoord
+            )
         }
     }
 
