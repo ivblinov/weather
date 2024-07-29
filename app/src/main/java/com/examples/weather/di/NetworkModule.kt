@@ -15,11 +15,11 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideRetrofitService(
-        moshiConverterFactory: MoshiConverterFactory
+        provideMoshiConverterFactory: MoshiConverterFactory
     ): WeatherService {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(moshiConverterFactory)
+            .addConverterFactory(provideMoshiConverterFactory)
             .build()
             .create(WeatherService::class.java)
     }
