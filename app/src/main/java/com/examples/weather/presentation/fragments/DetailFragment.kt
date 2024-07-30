@@ -12,10 +12,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.examples.weather.app.WeatherApplication
 import com.examples.weather.databinding.FragmentDetailBinding
+import com.examples.weather.presentation.recycler.adapters.DetailAdapter
 import com.examples.weather.presentation.states.HomeState
-import com.examples.weather.presentation.utils.checkValidCoordinate
+import com.examples.weather.presentation.utils.formatDay
 import com.examples.weather.presentation.viewmodels.DetailViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,6 +31,9 @@ class DetailFragment : Fragment() {
 
     @Inject
     lateinit var viewModel: DetailViewModel
+
+    @Inject
+    lateinit var dayAdapter: DetailAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +55,8 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.dayRecycler.adapter = dayAdapter
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
@@ -59,7 +64,16 @@ class DetailFragment : Fragment() {
                         when (state) {
                             HomeState.Loading -> {}
                             HomeState.Success -> {
-                                Log.d(TAG, "daily = ${viewModel.daily}")
+                                val time = viewModel.daily?.daily?.day?.first()
+                                val todayString = formatDay(time)
+                                binding.tvTodayResult.text = todayString
+
+                                with(viewModel.daily?.daily) {
+                                    this?.day?.removeFirstOrNull()
+                                    this?.temperature?.removeFirstOrNull()
+                                    this?.weatherCode?.removeFirstOrNull()
+                                }
+                                viewModel.daily?.let { dayAdapter.setData(it) }
                             }
                         }
                     }

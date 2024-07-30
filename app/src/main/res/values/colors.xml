@@ -8,4 +8,5 @@
     <color name="blue_text_button">#444E72</color>
     <color name="blue_background_top">#47BAE2</color>
     <color name="blue_background_bottom">#4894f4</color>
+    <color name="gray_color_stroke">#a3d0f9</color>
 </resources>

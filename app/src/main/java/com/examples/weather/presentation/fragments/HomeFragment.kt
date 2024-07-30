@@ -189,8 +189,6 @@ class HomeFragment : Fragment() {
 
     private fun startLocation(latitudeCoord: Double?, longitudeCoord: Double?) {
         if (latitudeCoord != null && longitudeCoord != null) {
-            Log.d(TAG, "latitude = $latitudeCoord")
-            Log.d(TAG, "longitude = $longitudeCoord")
             viewModel.getWeather(
                 latitude = latitudeCoord,
                 longitude = longitudeCoord
@@ -240,7 +238,7 @@ class HomeFragment : Fragment() {
             99 to "Гроза с сильным градом",
         )
 
-        private val weatherCodeImages = mapOf(
+        val weatherCodeImages = mapOf(
             0 to R.drawable.image_sunny,
             1 to R.drawable.image_sunny,
             2 to R.drawable.image_sun_cloudy,
