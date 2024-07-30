@@ -6,7 +6,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class DailyResultDto(
-    @Json(name = "time") override val day: List<String>,
-    @Json(name = "temperature_2m_max") override val temperature: List<Double>,
-    @Json(name = "weather_code") override val weatherCode: List<Int>,
+    @Json(name = "time") override val day: MutableList<String>,
+    @Json(name = "temperature_2m_max") override val temperature: MutableList<Double>,
+    @Json(name = "weather_code") override val weatherCode: MutableList<Int>,
 ) : DailyResult

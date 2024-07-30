@@ -21,6 +21,7 @@ class DetailViewModel @Inject constructor (
     val detailState = _detailState.asStateFlow()
 
     var daily: Daily? = null
+    var todayMonth: String? = null
 
     fun getDaily(
         latitude: Double?,

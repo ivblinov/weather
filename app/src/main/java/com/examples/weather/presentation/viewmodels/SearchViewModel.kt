@@ -27,7 +27,6 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
             _searchState.value = SearchState.Loading
             coordinate = repository.getAltitude(locality).searchResultList[0]
-            Log.d(TAG, "getAlt = $coordinate")
             _searchState.value = SearchState.Success
         }
     }
