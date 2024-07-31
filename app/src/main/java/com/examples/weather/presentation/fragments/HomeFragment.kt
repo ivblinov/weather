@@ -163,7 +163,7 @@ class HomeFragment : Fragment() {
             result.addOnSuccessListener {
                 viewModel.getWeather(
                     latitude = it.latitude,
-                    longitude = it.longitudegi
+                    longitude = it.longitude
                 )
                 latitude = it.latitude
                 longitude = it.longitude
