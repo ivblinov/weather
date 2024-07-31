@@ -24,7 +24,7 @@ class SearchViewModel @Inject constructor(
     val searchState = _searchState.asStateFlow()
 
     fun getAltitude(locality: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _searchState.value = SearchState.Loading
             coordinate = repository.getAltitude(locality).searchResultList[0]
             _searchState.value = SearchState.Success

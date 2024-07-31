@@ -28,7 +28,10 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.IOException
+import java.util.Locale
 import javax.inject.Inject
 
 private const val TAG = "MyLog"
@@ -111,6 +114,7 @@ class HomeFragment : Fragment() {
                             }
                             with(binding) {
                                 tvTemperature.text = temperature
+                                tvDegree.visibility = View.VISIBLE
                                 tvCloudy.text = weatherCodeString
                                 windResult.text = windResultString
                                 humResult.text = humidityResult
@@ -145,6 +149,7 @@ class HomeFragment : Fragment() {
             Log.d(TAG, "checkPermissions: false")
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun startLocation(
         fusedClient: FusedLocationProviderClient,
@@ -152,7 +157,7 @@ class HomeFragment : Fragment() {
     ) {
         try {
             val result = fusedClient.getCurrentLocation(
-                Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+                Priority.PRIORITY_HIGH_ACCURACY,
                 cancellationSource.token
             )
             result.addOnSuccessListener {
@@ -163,20 +168,9 @@ class HomeFragment : Fragment() {
                 latitude = it.latitude
                 longitude = it.longitude
 
-/*                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                        geocoder = Geocoder(requireContext(), Locale.getDefault())
-                        try {
-                            geocoder?.getFromLocation(it.latitude, it.longitude, 1) { addressList ->
-                                val address = addressList[0]
-                                Log.d(TAG, "address = $address")
-                                Log.d(TAG, "locality: ${address.locality}")
-                            }
-                        } catch (e: IOException) {
-                            Log.d(TAG, "e = $e")
-                        }
-                    }
-                }*/
+//                if (checkValidCoordinate(latitude,longitude))
+//                    getNameLocality(latitude!!, longitude!!)
+
             }
         } catch (e: SecurityException) {
             Toast.makeText(
@@ -187,12 +181,34 @@ class HomeFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun startLocation(latitudeCoord: Double?, longitudeCoord: Double?) {
         if (latitudeCoord != null && longitudeCoord != null) {
             viewModel.getWeather(
                 latitude = latitudeCoord,
                 longitude = longitudeCoord
             )
+//            getNameLocality(latitudeCoord, longitudeCoord)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun getNameLocality(latitude: Double, longitude: Double) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                try {
+                    geocoder = Geocoder(requireContext(), Locale("ru",))
+                    geocoder?.getFromLocation(latitude, longitude, 1) { addressList ->
+                        val address = addressList[0]
+                        binding.tvLocality.text = address.locality
+                        binding.imageLocality.visibility = View.VISIBLE
+                    }
+                } catch (e: IOException) {
+                    Log.d(TAG, "IOException = $e")
+                } catch (e: Exception) {
+                    Log.d(TAG, "Exception = $e")
+                }
+            }
         }
     }
 
