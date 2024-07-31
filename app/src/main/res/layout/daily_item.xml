@@ -22,7 +22,7 @@
             android:fontFamily="@font/overpass_bold"
             android:textColor="@color/white"
             android:textSize="18sp"
-            tools:text="@tools:sample/lorem" />
+            tools:text="Сен, 12" />
 
         <ImageView
             android:id="@+id/imageWeatherCode"
@@ -43,7 +43,7 @@
             android:fontFamily="@font/overpass_regular"
             android:textColor="@color/white"
             android:textSize="18sp"
-            tools:text="@tools:sample/lorem" />
+            tools:text="12°" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

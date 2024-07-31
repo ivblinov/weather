@@ -15,6 +15,8 @@ fun formatDay(time: String?): String {
     return todayString
 }
 
+fun getHourFromDate(date: String): String = "${date[11]}${date[12]}"
+
 val monthMap = mapOf(
     "01" to "Янв",
     "02" to "Фев",
