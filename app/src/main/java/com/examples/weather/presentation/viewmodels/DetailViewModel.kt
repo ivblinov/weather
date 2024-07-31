@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.examples.weather.data.Repository
 import com.examples.weather.entities.Daily
+import com.examples.weather.entities.Hourly
 import com.examples.weather.presentation.states.HomeState
 import com.examples.weather.presentation.utils.checkValidCoordinate
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,11 @@ class DetailViewModel @Inject constructor (
     private val _detailState = MutableStateFlow<HomeState>(HomeState.Success)
     val detailState = _detailState.asStateFlow()
 
+    private val _hourlyState = MutableStateFlow<HomeState>(HomeState.Success)
+    val hourlyState = _hourlyState.asStateFlow()
+
     var daily: Daily? = null
+    var hourly: Hourly? = null
     var todayMonth: String? = null
 
     fun getDaily(
@@ -32,6 +37,19 @@ class DetailViewModel @Inject constructor (
                 _detailState.value = HomeState.Loading
                 daily = repository.loadDaily(latitude!!, longitude!!)
                 _detailState.value = HomeState.Success
+            }
+        }
+    }
+
+    fun getHourly(
+        latitude: Double?,
+        longitude: Double?,
+    ) {
+        if (checkValidCoordinate(latitude, longitude)) {
+            viewModelScope.launch {
+                _hourlyState.value = HomeState.Loading
+                hourly = repository.loadHourly(latitude!!, longitude!!)
+                _hourlyState.value = HomeState.Success
             }
         }
     }

@@ -17,7 +17,11 @@ import com.examples.weather.presentation.states.HomeState
 import com.examples.weather.presentation.utils.formatDay
 import com.examples.weather.presentation.viewmodels.DetailViewModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
+
 
 private const val TAG = "MyLog"
 
@@ -35,12 +39,17 @@ class DetailFragment : Fragment() {
     @Inject
     lateinit var dayAdapter: DetailAdapter
 
+    private val currentDate = Date()
+    private val timeFormat = SimpleDateFormat("HH", Locale.getDefault())
+    private val timeText: String = timeFormat.format(currentDate)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments.let {
             latitude = it?.getDouble(LATITUDE_KEY)
             longitude = it?.getDouble(LONGITUDE_KEY)
         }
+        Log.d(TAG, "timeText = $timeText")
     }
 
     override fun onCreateView(
@@ -54,6 +63,9 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.getDaily(latitude, longitude)
+        viewModel.getHourly(latitude, longitude)
 
         binding.dayRecycler.adapter = dayAdapter
 
@@ -78,10 +90,19 @@ class DetailFragment : Fragment() {
                         }
                     }
                 }
+                launch {
+                    viewModel.hourlyState.collect { state ->
+
+                        when (state) {
+                            HomeState.Loading -> {}
+                            HomeState.Success -> {
+
+                            }
+                        }
+                    }
+                }
             }
         }
-
-        viewModel.getDaily(latitude, longitude)
 
         binding.blackBlock.setOnClickListener {
             findNavController().popBackStack()

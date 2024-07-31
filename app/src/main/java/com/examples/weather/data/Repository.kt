@@ -5,6 +5,7 @@ import com.examples.weather.data.api.GeocodingService
 import com.examples.weather.data.api.WeatherService
 import com.examples.weather.data.models_dto.CurrentWeatherDto
 import com.examples.weather.data.models_dto.DailyDto
+import com.examples.weather.data.models_dto.HourlyDto
 import com.examples.weather.data.models_dto.SearchResultListDto
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,6 +34,16 @@ class Repository @Inject constructor(
         longitude: Double,
     ): DailyDto {
         return weatherService.getDaily(
+            latitude = latitude,
+            longitude = longitude,
+        )
+    }
+
+    suspend fun loadHourly(
+        latitude: Double,
+        longitude: Double,
+    ): HourlyDto {
+        return weatherService.getHourly(
             latitude = latitude,
             longitude = longitude,
         )
