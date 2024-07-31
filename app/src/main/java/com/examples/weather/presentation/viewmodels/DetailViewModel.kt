@@ -1,6 +1,5 @@
 package com.examples.weather.presentation.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.examples.weather.data.Repository
@@ -18,9 +17,8 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
-private const val TAG = "MyLog"
-class DetailViewModel @Inject constructor (
-    private val repository: Repository
+class DetailViewModel @Inject constructor(
+    private val repository: Repository,
 ) : ViewModel() {
 
     private val _detailState = MutableStateFlow<HomeState>(HomeState.Success)
@@ -31,7 +29,6 @@ class DetailViewModel @Inject constructor (
 
     var daily: Daily? = null
     var hourly: Hourly? = null
-    var todayMonth: String? = null
     private var currentTime: String? = null
     var startIndex: Int? = null
 

@@ -11,6 +11,7 @@ import javax.inject.Singleton
     modules = [
         NetworkModule::class,
         SearchNetworkModule::class,
+        GetApplicationModule::class,
     ]
 )
 interface AppComponent {

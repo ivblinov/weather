@@ -50,6 +50,7 @@ dependencies {
 
     // Dagger:
     implementation (libs.dagger)
+    implementation(libs.androidx.monitor)
     ksp (libs.dagger.compiler)
 
     // Moshi:

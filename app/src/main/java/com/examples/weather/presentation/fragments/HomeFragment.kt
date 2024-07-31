@@ -29,6 +29,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.util.Locale
@@ -43,7 +44,6 @@ class HomeFragment : Fragment() {
 
     private var fusedClient: FusedLocationProviderClient? = null
     private var cancellationSource: CancellationTokenSource? = null
-    private var geocoder: Geocoder? = null
     private var latitude: Double? = null
     private var longitude: Double? = null
 
@@ -69,7 +69,6 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -87,38 +86,77 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.currentWeatherState.collect { state ->
-                    when (state) {
-                        HomeState.Loading -> {}
-                        HomeState.Success -> {
-                            val weather = viewModel.currentWeather
-                            val temperature = weather?.temperature?.toInt()?.toString()
-                            val weatherCode = weather?.weatherCode
-                            val weatherCodeString = weatherCodeMap[weather?.weatherCode]
-                            val windSpeed = weather?.windSpeed?.toInt()?.toString() ?: "0"
-                            val windResultString = "$windSpeed км/ч"
-                            val humidity = weather?.relativeHumidity ?: ""
-                            val humidityResult = "$humidity%"
-                            val time = weather?.time
-                            val day = "${time?.get(8) ?: ""}${time?.get(9) ?: ""}"
-                            val monthNumber = "${time?.get(5) ?: ""}${time?.get(6) ?: ""}"
-                            val month = monthMap[monthNumber] ?: ""
-                            val todayString = "Сегодня, $day $month"
+                launch {
+                    viewModel.currentWeatherState.collect { state ->
+                        when (state) {
+                            HomeState.Loading -> {
+                                binding.blackBlock.visibility = View.GONE
+                                binding.weatherBlock.visibility = View.GONE
+                                binding.btnDetail.visibility = View.GONE
+                                binding.progressBar.visibility = View.VISIBLE
+                            }
+                            HomeState.Success -> {
+                                val weather = viewModel.currentWeather
+                                val temperature = weather?.temperature?.toInt()?.toString()
+                                val weatherCode = weather?.weatherCode
+                                val weatherCodeString = weatherCodeMap[weather?.weatherCode]
+                                val windSpeed = weather?.windSpeed?.toInt()?.toString() ?: "0"
+                                val windResultString = "$windSpeed км/ч"
+                                val humidity = weather?.relativeHumidity ?: ""
+                                val humidityResult = "$humidity%"
+                                val time = weather?.time
+                                val day = "${time?.get(8) ?: ""}${time?.get(9) ?: ""}"
+                                val monthNumber = "${time?.get(5) ?: ""}${time?.get(6) ?: ""}"
+                                val month = monthMap[monthNumber] ?: ""
+                                val todayString = "Сегодня, $day $month"
 
-                            if (weatherCode != null) {
-                                weatherCodeImages[weather.weatherCode]?.let {
-                                    binding.imageView.setImageResource(
-                                        it
-                                    )
+                                if (weatherCode != null) {
+                                    weatherCodeImages[weather.weatherCode]?.let {
+                                        binding.imageView.setImageResource(
+                                            it
+                                        )
+                                    }
+                                }
+                                with(binding) {
+                                    tvTemperature.text = temperature
+                                    tvDegree.visibility = View.VISIBLE
+                                    tvCloudy.text = weatherCodeString
+                                    windResult.text = windResultString
+                                    humResult.text = humidityResult
+                                    tvDateToday.text = todayString
+                                }
+                                if (weatherCode != null) {
+                                    binding.progressBar.visibility = View.GONE
+                                    binding.blackBlock.visibility = View.VISIBLE
+                                    binding.weatherBlock.visibility = View.VISIBLE
+                                    binding.btnDetail.visibility = View.VISIBLE
+                                } else {
+                                    binding.progressBar.visibility = View.VISIBLE
                                 }
                             }
-                            with(binding) {
-                                tvTemperature.text = temperature
-                                tvDegree.visibility = View.VISIBLE
-                                tvCloudy.text = weatherCodeString
-                                windResult.text = windResultString
-                                humResult.text = humidityResult
-                                tvDateToday.text = todayString
+                        }
+                    }
+                }
+                launch {
+                    viewModel.geocoderState.collect { state ->
+                        when (state) {
+                            HomeState.Loading -> {
+
+                            }
+                            HomeState.Success -> {
+                                binding.tvLocality.text = viewModel.address ?: ""
+                                if (viewModel.address != null && viewModel.address != "") {
+                                    binding.imageLocality.visibility = View.VISIBLE
+                                } else {
+                                    binding.imageLocality.visibility = View.GONE
+                                    latitude?.let {
+                                        longitude?.let { it1 ->
+                                            viewModel.getNameLocality(
+                                                it, it1, requireContext()
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -133,7 +171,6 @@ class HomeFragment : Fragment() {
         cancellationSource?.cancel()
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun checkPermissions(
         fusedClient: FusedLocationProviderClient,
         cancellationSource: CancellationTokenSource
@@ -150,7 +187,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun startLocation(
         fusedClient: FusedLocationProviderClient,
         cancellationSource: CancellationTokenSource
@@ -163,14 +199,16 @@ class HomeFragment : Fragment() {
             result.addOnSuccessListener {
                 viewModel.getWeather(
                     latitude = it.latitude,
-                    longitude = it.longitude
+                    longitude = it.longitude,
+                    context = this.requireContext()
+                )
+                viewModel.getNameLocality(
+                    latitude = it.latitude,
+                    longitude = it.longitude,
+                    this.requireContext()
                 )
                 latitude = it.latitude
                 longitude = it.longitude
-
-//                if (checkValidCoordinate(latitude,longitude))
-//                    getNameLocality(latitude!!, longitude!!)
-
             }
         } catch (e: SecurityException) {
             Toast.makeText(
@@ -181,34 +219,18 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun startLocation(latitudeCoord: Double?, longitudeCoord: Double?) {
         if (latitudeCoord != null && longitudeCoord != null) {
             viewModel.getWeather(
                 latitude = latitudeCoord,
-                longitude = longitudeCoord
+                longitude = longitudeCoord,
+                context = this.requireContext()
             )
-//            getNameLocality(latitudeCoord, longitudeCoord)
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun getNameLocality(latitude: Double, longitude: Double) {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                try {
-                    geocoder = Geocoder(requireContext(), Locale("ru",))
-                    geocoder?.getFromLocation(latitude, longitude, 1) { addressList ->
-                        val address = addressList[0]
-                        binding.tvLocality.text = address.locality
-                        binding.imageLocality.visibility = View.VISIBLE
-                    }
-                } catch (e: IOException) {
-                    Log.d(TAG, "IOException = $e")
-                } catch (e: Exception) {
-                    Log.d(TAG, "Exception = $e")
-                }
-            }
+            viewModel.getNameLocality(
+                latitude = latitudeCoord,
+                longitude = longitudeCoord,
+                this.requireContext()
+            )
         }
     }
 

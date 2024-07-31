@@ -1,7 +1,6 @@
 package com.examples.weather.presentation.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,13 +18,7 @@ import com.examples.weather.presentation.utils.formatDay
 import com.examples.weather.presentation.utils.getHourFromDate
 import com.examples.weather.presentation.viewmodels.DetailViewModel
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
-
-
-private const val TAG = "MyLog"
 
 class DetailFragment : Fragment() {
 
