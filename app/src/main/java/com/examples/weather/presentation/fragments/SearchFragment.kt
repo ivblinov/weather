@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -75,7 +76,11 @@ class SearchFragment : Fragment() {
 
         binding.btnSearch.setOnClickListener {
             val locality = binding.locality.text.toString()
-            getAltitude(locality = locality)
+            if (locality.length > 1) {
+                getAltitude(locality = locality)
+            } else {
+                Toast.makeText(requireContext(), "Введите более одного символа", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
