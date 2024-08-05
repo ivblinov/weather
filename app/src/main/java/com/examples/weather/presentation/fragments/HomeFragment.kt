@@ -1,7 +1,9 @@
 package com.examples.weather.presentation.fragments
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -72,16 +74,24 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        startLocation(latitude, longitude)
+        val startLocationFlag = startLocation(latitude, longitude)
 
-        fusedClient?.let { fusedClient ->
-            cancellationSource?.let { cancellationSource ->
-                checkPermissions(fusedClient, cancellationSource)
+        if (!startLocationFlag) {
+            fusedClient?.let { fusedClient ->
+                cancellationSource?.let { cancellationSource ->
+                    if (checkGeolocation()) {
+                        checkPermissions(fusedClient, cancellationSource)
+                    }
+                }
             }
         }
 
         binding.btnDetail.setOnClickListener {
             navigateOnDetailFragment(latitude, longitude)
+        }
+
+        binding.blackBlock.setOnClickListener {
+            findNavController().popBackStack()
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -219,8 +229,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun startLocation(latitudeCoord: Double?, longitudeCoord: Double?) {
-        if (latitudeCoord != null && longitudeCoord != null) {
+    private fun startLocation(latitudeCoord: Double?, longitudeCoord: Double?): Boolean {
+        return if (latitudeCoord != null && longitudeCoord != null) {
             viewModel.getWeather(
                 latitude = latitudeCoord,
                 longitude = longitudeCoord,
@@ -231,7 +241,8 @@ class HomeFragment : Fragment() {
                 longitude = longitudeCoord,
                 this.requireContext()
             )
-        }
+            true
+        } else false
     }
 
     private fun navigateOnDetailFragment(latitude: Double?, longitude: Double?) {
@@ -242,6 +253,13 @@ class HomeFragment : Fragment() {
             )
             findNavController().navigate(R.id.action_homeFragment_to_detailFragment, bundle)
         }
+    }
+
+    private fun checkGeolocation(): Boolean {
+        val locationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        return enabled
     }
 
     companion object {
