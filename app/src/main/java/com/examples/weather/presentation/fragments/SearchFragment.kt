@@ -1,7 +1,12 @@
 package com.examples.weather.presentation.fragments
 
 import android.Manifest
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,12 +27,14 @@ import com.examples.weather.databinding.FragmentSearchBinding
 import com.examples.weather.presentation.states.SearchState
 import com.examples.weather.presentation.utils.checkValidCoordinate
 import com.examples.weather.presentation.viewmodels.SearchViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 const val LATITUDE_KEY = "latitudeKey"
 const val LONGITUDE_KEY = "longitudeKey"
+const val PREFERENCE_NAME = "prefs_name"
+const val KEY_FIRST_OPENING = "first_open"
 
 private const val TAG = "MyLog"
 
@@ -38,11 +45,19 @@ class SearchFragment : Fragment() {
     @Inject
     lateinit var viewModel: SearchViewModel
 
+    private var prefs: SharedPreferences? = null
+    private var editor: Editor? = null
+
     private val launcher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { map ->
-        if (map.values.isNotEmpty() && map.values.all { it }) {
-            findNavController().navigate(R.id.action_searchFragment_to_homeFragment)
+        if (map.values.isNotEmpty() && map.values.all { it } && checkGeolocation()) {
+            val firstOpeningFlag = prefs?.getBoolean(KEY_FIRST_OPENING, false)
+            if (firstOpeningFlag != true) {
+                editor?.putBoolean(KEY_FIRST_OPENING, true)
+                editor?.apply()
+                findNavController().navigate(R.id.action_searchFragment_to_homeFragment)
+            }
         }
     }
 
@@ -51,6 +66,8 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         (activity?.applicationContext as WeatherApplication).appComponent.inject(this)
+        prefs = requireContext().getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE)
+        editor = prefs?.edit()
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -95,11 +112,23 @@ class SearchFragment : Fragment() {
                     requireContext(),
                     permission
                 ) == PackageManager.PERMISSION_GRANTED
-            }) {
-            findNavController().navigate(R.id.action_searchFragment_to_homeFragment)
+            } && checkGeolocation()
+            ) {
+            val firstOpeningFlag = prefs?.getBoolean(KEY_FIRST_OPENING, false)
+            if (firstOpeningFlag != true) {
+                editor?.putBoolean(KEY_FIRST_OPENING, true)?.apply()
+                findNavController().navigate(R.id.action_searchFragment_to_homeFragment)
+            }
         } else {
             launcher.launch(REQUIRED_PERMISSIONS)
         }
+    }
+
+    private fun checkGeolocation(): Boolean {
+        val locationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        return enabled
     }
 
     private fun getAltitude(locality: String) {
@@ -112,6 +141,10 @@ class SearchFragment : Fragment() {
                 Pair(LATITUDE_KEY, latitude),
                 Pair(LONGITUDE_KEY, longitude),
             )
+            val firstOpeningFlag = prefs?.getBoolean(KEY_FIRST_OPENING, false)
+            if (firstOpeningFlag != true) {
+                editor?.putBoolean(KEY_FIRST_OPENING, true)?.apply()
+            }
             findNavController().navigate(R.id.action_searchFragment_to_homeFragment, bundle)
         }
     }
