@@ -7,6 +7,7 @@ import com.examples.weather.data.models_dto.CurrentWeatherDto
 import com.examples.weather.data.models_dto.DailyDto
 import com.examples.weather.data.models_dto.HourlyDto
 import com.examples.weather.data.models_dto.SearchResultListDto
+import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -49,7 +50,7 @@ class Repository @Inject constructor(
         )
     }
 
-    suspend fun getAltitude(locality: String): SearchResultListDto {
+    suspend fun getAltitude(locality: String): Response<SearchResultListDto> {
         return geocodingService.getAltitude(locality)
     }
 }

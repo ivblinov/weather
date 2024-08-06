@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.examples.weather.data.Repository
 import com.examples.weather.entities.SearchResult
-import com.examples.weather.entities.SearchResultList
 import com.examples.weather.presentation.states.SearchState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +25,19 @@ class SearchViewModel @Inject constructor(
     fun getAltitude(locality: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _searchState.value = SearchState.Loading
-            coordinate = repository.getAltitude(locality).searchResultList[0]
-            _searchState.value = SearchState.Success
+            Log.d(TAG, "getAltitude: loading")
+            Log.d(TAG, "coordinate = $coordinate")
+//            coordinate = repository.getAltitude(locality).searchResultList[0]
+            try {
+                val response = repository.getAltitude(locality)
+                Log.d(TAG, "code = ${response.code()}")
+                coordinate = response.body()?.searchResultList?.get(0)
+                _searchState.value = SearchState.Success
+            } catch (e: com.squareup.moshi.JsonDataException) {
+                e.stackTrace
+                Log.d(TAG, "e = ${e.message}")
+                _searchState.value = SearchState.Error
+            }
         }
     }
 

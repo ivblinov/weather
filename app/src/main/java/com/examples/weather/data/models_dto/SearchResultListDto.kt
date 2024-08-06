@@ -1,6 +1,5 @@
 package com.examples.weather.data.models_dto
 
-import com.examples.weather.entities.SearchResult
 import com.examples.weather.entities.SearchResultList
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
