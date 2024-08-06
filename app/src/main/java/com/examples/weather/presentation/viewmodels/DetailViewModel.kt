@@ -1,5 +1,6 @@
 package com.examples.weather.presentation.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.examples.weather.data.Repository
@@ -17,6 +18,7 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
+private const val TAG = "MyLog"
 class DetailViewModel @Inject constructor(
     private val repository: Repository,
 ) : ViewModel() {
@@ -78,6 +80,12 @@ class DetailViewModel @Inject constructor(
         val currentDate = Date()
         val timeFormat = SimpleDateFormat("HH", Locale.getDefault())
         val timeText: String = timeFormat.format(currentDate)
+        Log.d(TAG, "getCurrentTime: $timeText")
         return timeText
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d(TAG, "onCleared: DetailVM")
     }
 }

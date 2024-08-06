@@ -13,6 +13,7 @@ import com.examples.weather.R
 import com.examples.weather.app.WeatherApplication
 import com.examples.weather.databinding.FragmentDetailBinding
 import com.examples.weather.presentation.recycler.adapters.DetailAdapter
+import com.examples.weather.presentation.recycler.adapters.HourlyAdapter
 import com.examples.weather.presentation.states.HomeState
 import com.examples.weather.presentation.utils.formatDay
 import com.examples.weather.presentation.utils.getHourFromDate
@@ -33,6 +34,9 @@ class DetailFragment : Fragment() {
 
     @Inject
     lateinit var dayAdapter: DetailAdapter
+
+    @Inject
+    lateinit var hourlyAdapter: HourlyAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +62,7 @@ class DetailFragment : Fragment() {
         viewModel.getHourly(latitude, longitude)
 
         binding.dayRecycler.adapter = dayAdapter
+        binding.hourlyRecycler.adapter = hourlyAdapter
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -82,113 +87,21 @@ class DetailFragment : Fragment() {
                 }
                 launch {
                     viewModel.hourlyState.collect { state ->
-
                         when (state) {
                             HomeState.Loading -> {}
                             HomeState.Success -> {
                                 val startIndex = viewModel.startIndex
-                                val weatherCodeList = viewModel.hourly?.hourly?.weatherCode
-                                val temperatureList = viewModel.hourly?.hourly?.temperature
-                                val hourList = viewModel.hourly?.hourly?.hour
-
-                                val temp1 = startIndex?.let { temperatureList?.get(it) }?.toInt()
-                                if (temp1 != null) {
-                                    val fulTemp1 = "$temp1°C"
-                                    binding.tempItem1.text = fulTemp1
+                                startIndex?.let { startIndexLocal ->
+                                    with(viewModel.hourly?.hourly) {
+                                        repeat(startIndexLocal) {
+                                            this?.temperature?.removeFirstOrNull()
+                                            this?.weatherCode?.removeFirstOrNull()
+                                            this?.hour?.removeFirstOrNull()
+                                        }
+                                    }
+                                    viewModel.hourly?.let { hourlyAdapter.setData(it) }
                                 }
-
-                                val temp2 =
-                                    startIndex?.let { temperatureList?.get(it + 1) }?.toInt()
-                                if (temp2 != null) {
-                                    val fulTemp2 = "$temp2°C"
-                                    binding.tempItem2.text = fulTemp2
-                                }
-
-                                val temp3 =
-                                    startIndex?.let { temperatureList?.get(it + 2) }?.toInt()
-                                if (temp3 != null) {
-                                    val fulTemp3 = "$temp3°C"
-                                    binding.tempItem3.text = fulTemp3
-                                }
-
-                                val temp4 =
-                                    startIndex?.let { temperatureList?.get(it + 3) }?.toInt()
-                                if (temp4 != null) {
-                                    val fulTemp4 = "$temp4°C"
-                                    binding.tempItem4.text = fulTemp4
-                                }
-
-                                val temp5 =
-                                    startIndex?.let { temperatureList?.get(it + 4) }?.toInt()
-                                if (temp5 != null) {
-                                    val fulTemp5 = "$temp5°C"
-                                    binding.tempItem5.text = fulTemp5
-                                }
-
-                                val weatherCode1 = startIndex?.let { weatherCodeList?.get(it) }
-                                weatherCodeImages[weatherCode1]?.let {
-                                    binding.imageItem1.setImageResource(
-                                        it
-                                    )
-                                }
-
-                                val weatherCode2 = startIndex?.let { weatherCodeList?.get(it + 1) }
-                                weatherCodeImages[weatherCode2]?.let {
-                                    binding.imageItem2.setImageResource(
-                                        it
-                                    )
-                                }
-
-                                val weatherCode3 = startIndex?.let { weatherCodeList?.get(it + 2) }
-                                weatherCodeImages[weatherCode3]?.let {
-                                    binding.imageItem3.setImageResource(
-                                        it
-                                    )
-                                }
-
-                                val weatherCode4 = startIndex?.let { weatherCodeList?.get(it + 3) }
-                                weatherCodeImages[weatherCode4]?.let {
-                                    binding.imageItem4.setImageResource(
-                                        it
-                                    )
-                                }
-
-                                val weatherCode5 = startIndex?.let { weatherCodeList?.get(it + 4) }
-                                weatherCodeImages[weatherCode5]?.let {
-                                    binding.imageItem5.setImageResource(
-                                        it
-                                    )
-                                }
-
-                                val time1 = startIndex?.let { hourList?.get(it) }
-                                if (time1 != null) {
-                                    val fullTime1 = "${getHourFromDate(time1)}.00"
-                                    binding.timeItem1.text = fullTime1
-                                }
-
-                                val time2 = startIndex?.let { hourList?.get(it + 1) }
-                                if (time2 != null) {
-                                    val fullTime2 = "${getHourFromDate(time2)}.00"
-                                    binding.timeItem2.text = fullTime2
-                                }
-
-                                val time3 = startIndex?.let { hourList?.get(it + 2) }
-                                if (time3 != null) {
-                                    val fullTime3 = "${getHourFromDate(time3)}.00"
-                                    binding.timeItem3.text = fullTime3
-                                }
-
-                                val time4 = startIndex?.let { hourList?.get(it + 3) }
-                                if (time4 != null) {
-                                    val fullTime4 = "${getHourFromDate(time4)}.00"
-                                    binding.timeItem4.text = fullTime4
-                                }
-
-                                val time5 = startIndex?.let { hourList?.get(it + 4) }
-                                if (time5 != null) {
-                                    val fullTime5 = "${getHourFromDate(time5)}.00"
-                                    binding.timeItem5.text = fullTime5
-                                }
+                                binding.hourlyRecycler.visibility = View.VISIBLE
                             }
                         }
                     }
@@ -199,6 +112,11 @@ class DetailFragment : Fragment() {
         binding.blackBlock.setOnClickListener {
             findNavController().popBackStack()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.hourlyRecycler.visibility = View.INVISIBLE
     }
 
     override fun onDestroyView() {
