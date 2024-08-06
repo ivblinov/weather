@@ -11,6 +11,7 @@ import com.examples.weather.presentation.utils.formatDay
 import javax.inject.Inject
 
 private const val TAG = "MyLog"
+
 class DetailAdapter @Inject constructor() : RecyclerView.Adapter<DetailAdapter.DetailViewHolder>() {
 
     private var data: Daily? = null
