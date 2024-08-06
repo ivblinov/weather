@@ -84,7 +84,11 @@ class SearchFragment : Fragment() {
                         SearchState.Success -> {
                             val latitude = viewModel.coordinate?.latitude
                             val longitude = viewModel.coordinate?.longitude
+                            Log.d(TAG, "latitude = $latitude")
                             navigateOnHomeFragment(latitude, longitude)
+                        }
+                        SearchState.Error -> {
+                            Toast.makeText(requireContext(), "Введите корректное значение", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
@@ -103,6 +107,7 @@ class SearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.d(TAG, "onDestroyView: ")
         _binding = null
     }
 
