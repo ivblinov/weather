@@ -9,8 +9,8 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.examples.weather"
-        minSdk = 29
+        applicationId = "org.online.lite.app"
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
