@@ -12,12 +12,10 @@
 
 ### Скриншоты:
 
-<image src='app/src/main/assets/main_screen.jpg' width=150></image>
-<image src='app/src/main/assets/details_screen.jpg' width=150></image>
-<image src='app/src/main/assets/search_screen.jpg' width=150></image>
+<image src='app/src/main/assets/main_screen.jpg' width=200></image>
+<image src='app/src/main/assets/details_screen.jpg' width=200></image>
+<image src='app/src/main/assets/search_screen.jpg' width=200></image>
 
-<br>
-<image src='app/src/main/assets/preview.mp4' width=200></image>
 <br>
 
 ## Запуск проекта:
