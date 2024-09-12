@@ -36,6 +36,5 @@
 * Flow
 * Coroutines
 * Dagger 2
-* Room
 * Navigation Component
 * Views, Constraint Layout, RecyclerView
